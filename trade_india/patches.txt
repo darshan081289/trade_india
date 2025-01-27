@@ -1,0 +1,2 @@
+[pre_app_update]
+# Add any database migrations here

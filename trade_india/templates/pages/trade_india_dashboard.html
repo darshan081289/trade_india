@@ -1,0 +1,39 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="trade-india-dashboard">
+    <div class="trade-india-banner">
+        <h2>{{ _("Trade India Lead Analytics") }}</h2>
+        <p>{{ _("Overview of your Trade India lead performance") }}</p>
+    </div>
+
+    <div class="trade-india-filters">
+        <!-- Filters will be injected by JavaScript -->
+    </div>
+
+    <div class="trade-india-stats">
+        <!-- Stats will be injected by JavaScript -->
+    </div>
+
+    <div class="trade-india-charts row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="leadsBySource"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="conversionRate"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="/assets/trade_india/css/trade_india.css">
+{% endblock %}
+
+{% block script %}
+<script src="/assets/trade_india/js/trade_india_dashboard.js"></script>
+{% endblock %}

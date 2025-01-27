@@ -1,0 +1,23 @@
+{% if stats %}
+<div class="trade-india-stats">
+    <div class="trade-india-stat-card">
+        <div class="trade-india-stat-value">{{ stats.total_leads }}</div>
+        <div class="trade-india-stat-label">{{ _("Total Leads") }}</div>
+    </div>
+
+    <div class="trade-india-stat-card">
+        <div class="trade-india-stat-value">{{ stats.conversion_rate }}%</div>
+        <div class="trade-india-stat-label">{{ _("Conversion Rate") }}</div>
+    </div>
+
+    <div class="trade-india-stat-card">
+        <div class="trade-india-stat-value">{{ stats.active_leads }}</div>
+        <div class="trade-india-stat-label">{{ _("Active Leads") }}</div>
+    </div>
+
+    <div class="trade-india-stat-card">
+        <div class="trade-india-stat-value">{{ stats.converted_leads }}</div>
+        <div class="trade-india-stat-label">{{ _("Converted Leads") }}</div>
+    </div>
+</div>
+{% endif %}
