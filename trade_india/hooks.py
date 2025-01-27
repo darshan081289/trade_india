@@ -11,12 +11,16 @@ app_license = "MIT"
 scheduler_events = {
     "daily": [
         "trade_india.trade_india.api.fetch_trade_india_leads"
+    ],
+    "hourly": [
+        "trade_india.trade_india.api.sync_lead_status"
     ]
 }
 
 # Document Events
 doc_events = {
     "Lead": {
-        "after_insert": "trade_india.trade_india.api.process_lead"
+        "after_insert": "trade_india.trade_india.api.process_lead",
+        "on_update": "trade_india.trade_india.api.update_lead"
     }
 }
