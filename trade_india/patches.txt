@@ -1,5 +1,2 @@
-[pre_model_sync]
-# trade_india.patches.v0_0.initial_patch
-
-[post_model_sync]
-# Add post-model sync patches here
+[pre_app_update]
+# Add any database migrations here
