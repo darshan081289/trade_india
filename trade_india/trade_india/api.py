@@ -1,46 +1,71 @@
 import frappe
 import requests
+from datetime import datetime
 from frappe import _
 from frappe.utils import now_datetime
-from frappe.utils.background_jobs import enqueue
-from frappe.model.document import Document
-from frappe.utils.password import get_decrypted_password
 
-@frappe.whitelist()
-def fetch_trade_india_leads():
-    """Fetches leads from Trade India API"""
+    def fetch_trade_india_leads():
+
     settings = frappe.get_single("Trade India Settings")
-    
+
     if not settings.enabled:
-        frappe.msgprint(_("Trade India Integration is disabled"))
         return
-        
-    if not settings.api_key:
-        frappe.throw(_("API Key not configured in Trade India Settings"))
     
-    frappe.msgprint(_("Started fetching leads from Trade India"))
-    
-    try:
-        api_url = "https://api.tradeindia.com/leads"  # Replace with actual endpoint
-        headers = {
-            "Authorization": f"Bearer {settings.api_key}",
-            "Content-Type": "application/json"
-        }
-        
-        response = requests.get(api_url, headers=headers)
-        response.raise_for_status()
-        
-        leads = response.json()
-        frappe.log_error(f"Received {len(leads)} leads", "Trade India Debug")
-        
+        if not settings.api_key:
+            frappe.log_error("Trade India API key not configured", "Trade India Integration")
+            return
+
+            try:
+            # Replace with actual Trade India API endpoint
+            api_url = "https://api.tradeindia.com/leads"
+            headers = {
+                "Authorization": f"Bearer {settings.api_key}",
+                "Content-Type": "application/json"
+            }
+
+            response = requests.get(api_url, headers=headers)
+            response.raise_for_status()
+
+            leads = response.json()
+
         for lead_data in leads:
             create_lead(lead_data, settings)
-            
+
         settings.last_sync = now_datetime()
         settings.save()
-        
-        frappe.msgprint(_(f"Successfully synced {len(leads)} leads from Trade India"))
-        
+
     except Exception as e:
         frappe.log_error(f"Trade India API Error: {str(e)}", "Trade India Integration")
-        frappe.throw(_("Failed to fetch leads from Trade India. Check Error Log for details."))
+
+    def create_lead(lead_data, settings):
+        try:
+            # Check if lead already exists
+            existing_lead = frappe.get_list(
+                "Lead",
+                filters={"trade_india_id": lead_data.get("id")},
+                fields=["name"]
+            )
+        
+            if existing_lead:
+                return
+            
+            lead = frappe.get_doc({
+                "doctype": "Lead",
+                "lead_name": lead_data.get("name"),
+                "email_id": lead_data.get("email"),
+                "mobile_no": lead_data.get("phone"),
+                "source": "Trade India",
+                "trade_india_id": lead_data.get("id"),
+                "company_name": lead_data.get("company"),
+                "owner": settings.lead_owner
+            })
+        
+        lead.insert(ignore_permissions=True)
+        frappe.db.commit()
+
+        except Exception as e:
+            frappe.log_error(f"Lead Creation Error: {str(e)}", "Trade India Integration")
+
+        def process_lead(doc, method):
+            """Hook for additional processing after lead creation"""
+            pass
